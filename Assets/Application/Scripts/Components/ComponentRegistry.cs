@@ -8,24 +8,24 @@ public class ComponentRegistry : MonoBehaviour, IComponentRegistry
     {
         public string componentId;
         public GameObject componentObject;
+        public GameObject labelObject;
     }
 
     [SerializeField]
-    private List<ComponentMapping> mappings = new List<ComponentMapping>();
+    private List<ComponentMapping> mappings = new();
 
-    private Dictionary<string, GameObject> componentLookup = new Dictionary<string, GameObject>();
-
-    private IAppLogger logger;
+    private Dictionary<string, GameObject> componentLookup;
+    private Dictionary<string, GameObject> labelLookup;
 
     private void Awake()
     {
-        logger = new AppLogger();
         BuildLookup();
     }
 
     private void BuildLookup()
     {
         componentLookup = new Dictionary<string, GameObject>();
+        labelLookup = new Dictionary<string, GameObject>();
 
         foreach (var mapping in mappings)
         {
@@ -37,30 +37,64 @@ public class ComponentRegistry : MonoBehaviour, IComponentRegistry
 
             if (componentLookup.ContainsKey(mapping.componentId))
             {
-                logger.LogError($"Duplicate component mapping: {mapping.componentId}");
+                Debug.LogError(
+                    $"Duplicate component mapping: {mapping.componentId}");
+
                 continue;
             }
 
-            componentLookup.Add(mapping.componentId, mapping.componentObject);
+            componentLookup.Add(
+                mapping.componentId,
+                mapping.componentObject);
+
+            if (mapping.labelObject != null)
+            {
+                labelLookup.Add(
+                    mapping.componentId,
+                    mapping.labelObject);
+
+                mapping.labelObject.SetActive(false);
+            }
         }
     }
 
     public GameObject GetComponentObject(string componentId)
     {
-        if (TryGetComponentObject(componentId, out var componentObject))
+        if (TryGetComponentObject(
+            componentId,
+            out var componentObject))
+        {
             return componentObject;
+        }
 
         return null;
     }
 
-
-    //for unit testing
-    public bool TryGetComponentObject(string componentId, out GameObject componentObject)
+    public bool TryGetComponentObject(
+        string componentId,
+        out GameObject componentObject)
     {
+        componentObject = null;
 
         if (componentLookup == null)
             BuildLookup();
 
-        return componentLookup.TryGetValue(componentId, out componentObject);
+        return componentLookup.TryGetValue(
+            componentId,
+            out componentObject);
+    }
+
+    public bool TryGetComponentLabel(
+        string componentId,
+        out GameObject labelObject)
+    {
+        labelObject = null;
+
+        if (labelLookup == null)
+            BuildLookup();
+
+        return labelLookup.TryGetValue(
+            componentId,
+            out labelObject);
     }
 }

@@ -1,17 +1,24 @@
-
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class ProcedureStepController : MonoBehaviour
 {
+    [SerializeField]
+    private TextMeshProUGUI instructionText;
+
     private IProcedureEngine procedureEngine;
     private IComponentRegistry componentRegistry;
     private IComponentHighlighter highlighter;
     private IAppLogger logger;
-[SerializeField]
-private TextMeshProUGUI instructionText;
 
-    public void Initialize(IProcedureEngine engine, IComponentRegistry registry, IComponentHighlighter componentHighlighter, IAppLogger appLogger)
+    private readonly List<GameObject> activeLabels = new();
+
+    public void Initialize(
+        IProcedureEngine engine,
+        IComponentRegistry registry,
+        IComponentHighlighter componentHighlighter,
+        IAppLogger appLogger)
     {
         procedureEngine = engine;
         componentRegistry = registry;
@@ -39,33 +46,67 @@ private TextMeshProUGUI instructionText;
             ShowCurrentStep();
     }
 
-   
-private void ShowCurrentStep()
-{
-    highlighter.ClearHighlight();
-
-    var step = procedureEngine.CurrentStep;
-
-    if (step == null)
+    private void ShowCurrentStep()
     {
-        instructionText.text = procedureEngine.IsCompleted
-            ? "Procedure completed!"
-            : "No active procedure.";
+        ClearCurrentStep();
 
-        return;
+        var step = procedureEngine.CurrentStep;
+
+        if (step == null)
+        {
+            if (instructionText != null)
+            {
+                instructionText.text =
+                    procedureEngine.IsCompleted
+                        ? "Procedure completed!"
+                        : "No active procedure.";
+            }
+
+            return;
+        }
+
+        if (instructionText != null)
+            instructionText.text = step.instruction;
+
+        foreach (string componentId in step.componentIds)
+        {
+            ActivateComponent(componentId);
+        }
     }
 
-    instructionText.text = step.instruction;
+    private void ActivateComponent(string componentId)
+    {
+        if (componentRegistry.TryGetComponentObject(
+            componentId,
+            out var component))
+        {
+            highlighter.Highlight(component);
+        }
+        else
+        {
+            logger?.LogError(
+                $"Component mapping not found: {componentId}");
+        }
 
-    if (componentRegistry.TryGetComponentObject(
-        step.componentId, out var component))
-    {
-        highlighter.Highlight(component);
+        if (componentRegistry.TryGetComponentLabel(
+            componentId,
+            out var label))
+        {
+            label.SetActive(true);
+            activeLabels.Add(label);
+        }
     }
-    else
+
+    private void ClearCurrentStep()
     {
-        logger.LogError(
-            $"Component mapping not found: {step.componentId}");
+        highlighter?.ClearHighlight();
+
+        foreach (var label in activeLabels)
+        {
+            if (label != null)
+                label.SetActive(false);
+        }
+
+        activeLabels.Clear();
     }
-}
 }
