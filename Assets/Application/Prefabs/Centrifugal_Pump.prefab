@@ -1237,7 +1237,7 @@ MonoBehaviour:
   - componentId: coupling
     componentObject: {fileID: 2316300007721323776}
     labelObject: {fileID: 2179225234053482565}
-  - componentId: Pump
+  - componentId: pump
     componentObject: {fileID: 6240158427676439087}
     labelObject: {fileID: 6368940825941221559}
   - componentId: motor

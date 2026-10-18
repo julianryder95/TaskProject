@@ -51,9 +51,6 @@ public class JsonDataLoader : MonoBehaviour
         MaintenanceData data = JsonConvert.DeserializeObject<MaintenanceData>(
                 request.downloadHandler.text);
 
-
-
-
         LoadedData = data;
 
         logger?.Log($"Loaded equipment: {LoadedData.equipment.name}");

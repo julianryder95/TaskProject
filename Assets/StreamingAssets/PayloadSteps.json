@@ -42,7 +42,7 @@
                 },
                 {
                     "id": "step_03",
-                    "instruction": "Check the pump has right valves",
+                    "instruction": "Check whether the pump has right valves",
                     "componentIds": [ "pump" ],
                     "checklistItemIds": [
                         "pump_damage_check",
