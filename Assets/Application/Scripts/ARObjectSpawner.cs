@@ -13,7 +13,7 @@ public class ARObjectSpawner : MonoBehaviour
     [SerializeField] private ProcedureStepController procedureStepController;
 
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
-
+    [SerializeField]
     private bool isPlaced;
     private IAppLogger logger;
     [SerializeField] private ARPlaneManager arPlaneManager;
@@ -23,6 +23,7 @@ public class ARObjectSpawner : MonoBehaviour
     private void Awake()
     {
         logger = new AppLogger();
+        arPlaneManager = GetComponent<ARPlaneManager>();
     }
 
     private void Start()
@@ -39,25 +40,33 @@ public class ARObjectSpawner : MonoBehaviour
         if (Input.touchCount == 0)
             return;
 
-        Touch touch = Input.GetTouch(0);
+        //   Touch touch = ;
+        //
 
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
-        {
-            return;
-        }
-
-        if (touch.phase != TouchPhase.Began)
-            return;
+        //      if (touch.phase != TouchPhase.Began)
+        //         return;
 
         if (isPlaced)
             return;
 
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Pose hitPose = hits[0].pose;
+            isPlaced = true;
+
+            GameObject spawnedObject =
+                Instantiate(
+                    objectToSpawn,
+                    hitPose.position,
+                    new Quaternion(-90, 0, 0, 0));
+        }
         if (raycastManager.Raycast(
-                touch.position,
+                Input.GetTouch(0).position,
                 hits,
                 TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;
+            isPlaced = true;
 
             GameObject spawnedObject =
                 Instantiate(
@@ -67,7 +76,6 @@ public class ARObjectSpawner : MonoBehaviour
 
             InitializeProcedure(spawnedObject);
             HideExistingPlanes();
-            isPlaced = true;
         }
     }
 

@@ -5,35 +5,30 @@ using UnityEngine.Rendering;
 
 public class ComponentHighlighter : MonoBehaviour, IComponentHighlighter
 {
-    [SerializeField] private Material outlineMaterial;
-    [SerializeField] private Vector3 boundsPadding = new Vector3(0.02f, 0.02f, 0.02f);
+    [SerializeField]
+    private GameObject componentGameObj;
 
-    private List<GameObject> activeComponents = new();
+    [SerializeField] private string highlightLayer = "highlight";
+    [SerializeField] private string normalLayer = "Default";
 
     public void Highlight(GameObject component)
     {
-
-        activeComponents.Add(component);
+        component.layer = LayerMask.NameToLayer(highlightLayer);
+        componentGameObj = component;
     }
 
 
 
     public void ClearHighlight()
     {
-        foreach (var component in activeComponents)
-        {
+        componentGameObj.layer = LayerMask.NameToLayer(normalLayer);
 
-            // box.SetActive(false);
-
-        }
-
-        activeComponents.Clear();
     }
 
     private void OnDestroy()
     {
 
 
-        activeComponents.Clear();
+
     }
 }

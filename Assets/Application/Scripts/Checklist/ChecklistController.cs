@@ -8,12 +8,14 @@ public class ChecklistController : MonoBehaviour
 
     private ChecklistPersistence persistence;
     private ChecklistState checklistState;
-    private IAppLogger logger;
 
-    public void Initialize(IAppLogger appLogger)
+    private void Awake()
     {
-        logger = appLogger;
-        persistence = new ChecklistPersistence(logger);
+        Initialize();
+    }
+    public void Initialize()
+    {
+        persistence = new ChecklistPersistence();
         checklistState = persistence.Load();
 
         foreach (var toggle in checklistToggles)

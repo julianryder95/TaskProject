@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8171812529244446279}
   - component: {fileID: 6191241154505121441}
   - component: {fileID: 3762356953589441232}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 487605233087881845}
   - component: {fileID: 8548140511079570184}
   - component: {fileID: 1870429370614038619}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -473,7 +473,7 @@ GameObject:
   - component: {fileID: 5195846834602224130}
   - component: {fileID: 4651216363192162747}
   - component: {fileID: 1107114936196035960}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1255,8 +1255,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b27e9d122fa7242f0843fa35a3e380a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMaterial: {fileID: 2100000, guid: 1e311eef82d2a4d6cabffb54b3a0fade, type: 2}
-  boundsPadding: {x: 0.02, y: 0.02, z: 0.02}
+  componentGameObj: {fileID: 0}
+  highlightLayer: highlight
+  normalLayer: Default
 --- !u!4 &841632739751327733 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8767055241810449760, guid: 2031815de525e4e8e81349ba92ed25c2, type: 3}

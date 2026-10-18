@@ -5,11 +5,9 @@ using UnityEngine;
 public class ChecklistPersistence
 {
     private string filePath;
-    private IAppLogger logger;
 
-    public ChecklistPersistence(IAppLogger appLogger)
+    public ChecklistPersistence()
     {
-        logger = appLogger;
         filePath = Path.Combine(Application.persistentDataPath, "ChecklistState.json");
     }
 
@@ -20,7 +18,6 @@ public class ChecklistPersistence
         string json = JsonConvert.SerializeObject(state, Formatting.Indented);
         File.WriteAllText(filePath, json);
 
-        logger?.Log("Checklist state saved.");
 
     }
 

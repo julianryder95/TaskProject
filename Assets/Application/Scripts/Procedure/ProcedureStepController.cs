@@ -99,7 +99,7 @@ public class ProcedureStepController : MonoBehaviour
 
     private void ClearCurrentStep()
     {
-        highlighter?.ClearHighlight();
+        highlighter.ClearHighlight();
 
         foreach (var label in activeLabels)
         {
