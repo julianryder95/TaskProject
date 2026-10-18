@@ -4,7 +4,7 @@ using UnityEngine;
 public class AppInitializer : MonoBehaviour
 {
     [SerializeField] private JsonDataLoader dataLoader;
-
+    [SerializeField] private ChecklistController checklistController;
     public IProcedureEngine ProcedureEngine { get; private set; }
 
     private IAppLogger logger;
@@ -12,8 +12,10 @@ public class AppInitializer : MonoBehaviour
     private void Awake()
     {
         dataLoader = GetComponent<JsonDataLoader>();
+        checklistController = GetComponent<ChecklistController>();
         logger = new AppLogger();
         dataLoader.InitializeLogger(logger);
+
     }
 
     private void OnEnable()
@@ -42,11 +44,12 @@ public class AppInitializer : MonoBehaviour
         if (!ProcedureEngine.StartProcedure(procedure.id))
         {
             ProcedureEngine = null;
-            logger.LogError($"Failed to start procedure: {procedure.id}");
+            logger?.LogError($"Failed to start procedure: {procedure.id}");
             return;
         }
 
-        logger.Log($"Started procedure: {procedure.name}");
+        logger?.Log($"Started procedure: {procedure.name}");
+        checklistController.Initialize(data, logger);
     }
 
 

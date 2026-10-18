@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ChecklistPersistence
 {
-    private readonly string filePath;
-    private readonly IAppLogger logger;
+    private string filePath;
+    private IAppLogger logger;
 
     public ChecklistPersistence(IAppLogger appLogger)
     {

@@ -7,19 +7,15 @@ public class ComponentHighlighter : MonoBehaviour, IComponentHighlighter
 {
     [SerializeField] private Material outlineMaterial;
 
-    private readonly Dictionary<GameObject, List<GameObject>> overlays = new Dictionary<GameObject, List<GameObject>>();
-    private GameObject currentComponent;
+    private Dictionary<GameObject, List<GameObject>> overlays = new Dictionary<GameObject, List<GameObject>>();
+    private HashSet<GameObject> activeComponents = new HashSet<GameObject>();
 
     public void Highlight(GameObject component)
     {
-        ClearHighlight();
-
         if (component == null || outlineMaterial == null)
             return;
 
-        currentComponent = component;
-
-        if (!overlays.TryGetValue(component, out List<GameObject> objects))
+        if (!overlays.TryGetValue(component, out var objects))
         {
             objects = CreateOverlays(component);
             overlays.Add(component, objects);
@@ -27,20 +23,26 @@ public class ComponentHighlighter : MonoBehaviour, IComponentHighlighter
 
         foreach (var overlay in objects)
             overlay.SetActive(true);
+
+        activeComponents.Add(component);
     }
 
     public void ClearHighlight()
     {
-        if (currentComponent == null)
-            return;
-
-        if (overlays.TryGetValue(currentComponent, out var objects))
+        foreach (var component in activeComponents)
         {
-            foreach (var overlay in objects)
-                overlay.SetActive(false);
+            if (component != null &&
+                overlays.TryGetValue(component, out var objects))
+            {
+                foreach (var overlay in objects)
+                {
+                    if (overlay != null)
+                        overlay.SetActive(false);
+                }
+            }
         }
 
-        currentComponent = null;
+        activeComponents.Clear();
     }
 
     private List<GameObject> CreateOverlays(GameObject component)

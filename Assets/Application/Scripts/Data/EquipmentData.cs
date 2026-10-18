@@ -40,7 +40,7 @@ public class ProcedureStepData
     public string id;
     public string instruction;
     public List<string> componentIds;
-    public string checklistItemId;
+    public List<string> checklistItemIds;
 }
 
 [Serializable]

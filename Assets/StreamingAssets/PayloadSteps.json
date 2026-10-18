@@ -24,13 +24,21 @@
                     "id": "step_01",
                     "instruction": "Inspect the electric motor",
                     "componentIds": [ "motor" ],
-                    "checklistItemId": "motor_check"
+                    "checklistItemIds": [
+                        "motor_damage_check",
+                        "motor_noise_check",
+                        "motor_temperature_check"
+                    ]
                 },
                 {
                     "id": "step_02",
                     "instruction": "Inspect the shaft coupling",
                     "componentIds": [ "coupling" ],
-                    "checklistItemId": "coupling_check"
+                    "checklistItemIds": [
+                        "coupling_damage_check",
+                        "oupling_noise_check",
+                        "oupling_temperature_check"
+                    ]
                 }
             ]
         }
