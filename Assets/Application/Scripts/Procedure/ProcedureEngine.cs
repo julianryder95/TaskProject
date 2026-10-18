@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// Data-driven procedure state machine.
-/// Governs step sequencing, lifecycle events, and step-level checklist association.
-/// </summary>
+
 public class ProcedureEngine : IProcedureEngine
 {
     private readonly MaintenanceData maintenanceData;
@@ -32,11 +29,13 @@ public class ProcedureEngine : IProcedureEngine
 
     public int TotalSteps => CurrentProcedure?.steps?.Count ?? 0;
 
-    public bool IsCompleted { get; private set; }
+    public bool IsCompleted;
 
     public bool CanMoveNext => CurrentProcedure != null && !IsCompleted;
 
     public bool CanMovePrevious => CurrentProcedure != null && currentStepIndex > 0;
+
+    bool IProcedureEngine.IsCompleted => throw new NotImplementedException();
 
     public event Action<ProcedureStepData, int, int> OnStepChanged;
     public event Action<ProcedureData> OnProcedureStarted;

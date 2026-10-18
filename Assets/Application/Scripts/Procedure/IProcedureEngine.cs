@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Core contract for the data-driven procedure engine.
-/// Decouples workflow logic, step progression, and state evaluation from UI and AR rendering.
-/// </summary>
+
 public interface IProcedureEngine
 {
     ProcedureData CurrentProcedure { get; }

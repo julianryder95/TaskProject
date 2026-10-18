@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Registry mapping logical data IDs (from JSON) to physical 3D GameObjects and UI annotation labels.
-/// </summary>
 public interface IComponentRegistry
 {
     GameObject GetComponentObject(string componentId);
