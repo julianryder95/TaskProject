@@ -37,8 +37,8 @@ public class ARObjectSpawner : MonoBehaviour
     private void Update()
     {
 
-        if (Input.touchCount == 0)
-            return;
+        //     if (Input.touchCount == 0)
+        //       return;
 
         //   Touch touch = ;
         //
@@ -46,33 +46,24 @@ public class ARObjectSpawner : MonoBehaviour
         //      if (touch.phase != TouchPhase.Began)
         //         return;
 
-        if (isPlaced)
-            return;
+        //    if (isPlaced)
+        //      return;
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Pose hitPose = hits[0].pose;
-            isPlaced = true;
 
-            GameObject spawnedObject =
-                Instantiate(
-                    objectToSpawn,
-                    hitPose.position,
-                    new Quaternion(-90, 0, 0, 0));
-        }
         if (raycastManager.Raycast(
                 Input.GetTouch(0).position,
                 hits,
                 TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;
-            isPlaced = true;
-
             GameObject spawnedObject =
                 Instantiate(
                     objectToSpawn,
                     hitPose.position,
                     new Quaternion(-90, 0, 0, 0));
+            isPlaced = true;
+
+
 
             InitializeProcedure(spawnedObject);
             HideExistingPlanes();
