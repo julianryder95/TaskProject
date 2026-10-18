@@ -7,7 +7,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --dump=Function
 --float-precision=Standard
 --target-framework=NetFramework
---assembly-defines=Assembly-CSharp;
+--assembly-defines=Application;
 --assembly-defines=LineworkLite;
 --assembly-defines=Mono.Security;
 --assembly-defines=mscorlib;
@@ -76,7 +76,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --float-precision=Standard
 --target-framework=NetFramework
 --float-mode=Fast
---assembly-defines=Assembly-CSharp;
+--assembly-defines=Application;
 --assembly-defines=LineworkLite;
 --assembly-defines=Mono.Security;
 --assembly-defines=mscorlib;

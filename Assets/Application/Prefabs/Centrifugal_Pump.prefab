@@ -1255,7 +1255,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b27e9d122fa7242f0843fa35a3e380a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentGameObj: {fileID: 0}
   highlightLayer: highlight
   normalLayer: Default
 --- !u!4 &841632739751327733 stripped

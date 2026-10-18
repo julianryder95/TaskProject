@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 
-/*public class ProcedureEngineTests
+public class ProcedureEngineTests
 {
     private MaintenanceData CreateTestData()
     {
@@ -20,14 +20,26 @@ using System.Collections.Generic;
                             id = "step_01",
                             instruction = "Inspect motor",
                             componentIds = new List<string> { "motor" },
-                            checklistItemIds = new List<string> { "motor_check" }
                         },
                         new ProcedureStepData
                         {
                             id = "step_02",
                             instruction = "Inspect coupling",
                             componentIds = new List<string> { "coupling" },
-                            checklistItemIds = new List<string> { "coupling_check" }
+                        }
+                    }
+                },
+                new ProcedureData
+                {
+                    id = "procedure_02",
+                    name = "Emergency Shutdown",
+                    steps = new List<ProcedureStepData>
+                    {
+                        new ProcedureStepData
+                        {
+                            id = "step_e01",
+                            instruction = "Hit emergency stop button",
+                            componentIds = new List<string> { "motor" }
                         }
                     }
                 }
@@ -44,7 +56,10 @@ using System.Collections.Generic;
         bool result = engine.StartProcedure("procedure_01");
 
         Assert.That(result, Is.True);
+        Assert.That(engine.CurrentStep, Is.Not.Null);
         Assert.That(engine.CurrentStep.id, Is.EqualTo("step_01"));
+        Assert.That(engine.CurrentStepIndex, Is.EqualTo(0));
+        Assert.That(engine.TotalSteps, Is.EqualTo(2));
         Assert.That(engine.IsCompleted, Is.False);
     }
 
@@ -54,10 +69,11 @@ using System.Collections.Generic;
         var data = CreateTestData();
         var engine = new ProcedureEngine(data);
 
-        bool result = engine.StartProcedure("invalid");
+        bool result = engine.StartProcedure("invalid_id");
 
         Assert.That(result, Is.False);
         Assert.That(engine.CurrentProcedure, Is.Null);
+        Assert.That(engine.CurrentStep, Is.Null);
     }
 
     [Test]
@@ -71,7 +87,9 @@ using System.Collections.Generic;
         bool result = engine.MoveNext();
 
         Assert.That(result, Is.True);
+        Assert.That(engine.CurrentStep, Is.Not.Null);
         Assert.That(engine.CurrentStep.id, Is.EqualTo("step_02"));
+        Assert.That(engine.CurrentStepIndex, Is.EqualTo(1));
     }
 
     [Test]
@@ -88,6 +106,7 @@ using System.Collections.Generic;
         Assert.That(result, Is.True);
         Assert.That(engine.IsCompleted, Is.True);
         Assert.That(engine.CurrentStep, Is.Null);
+        Assert.That(engine.CanMoveNext, Is.False);
     }
 
     [Test]
@@ -102,7 +121,39 @@ using System.Collections.Generic;
         bool result = engine.MovePrevious();
 
         Assert.That(result, Is.True);
+        Assert.That(engine.CurrentStep, Is.Not.Null);
         Assert.That(engine.CurrentStep.id, Is.EqualTo("step_01"));
         Assert.That(engine.IsCompleted, Is.False);
     }
-}*/
+
+    [Test]
+    public void JumpToStep_NavigatesDirectlyToStep()
+    {
+        var data = CreateTestData();
+        var engine = new ProcedureEngine(data);
+
+        engine.StartProcedure("procedure_01");
+        bool result = engine.JumpToStep(1);
+
+        Assert.That(result, Is.True);
+        Assert.That(engine.CurrentStepIndex, Is.EqualTo(1));
+        Assert.That(engine.CurrentStep.id, Is.EqualTo("step_02"));
+    }
+
+
+
+    [Test]
+    public void Extensibility_MultipleProcedures_SwitchesCleanly()
+    {
+        var data = CreateTestData();
+        var engine = new ProcedureEngine(data);
+
+        engine.StartProcedure("procedure_01");
+        Assert.That(engine.TotalSteps, Is.EqualTo(2));
+
+        engine.StartProcedure("procedure_02");
+        Assert.That(engine.CurrentProcedure.name, Is.EqualTo("Emergency Shutdown"));
+        Assert.That(engine.TotalSteps, Is.EqualTo(1));
+        Assert.That(engine.CurrentStep.id, Is.EqualTo("step_e01"));
+    }
+}

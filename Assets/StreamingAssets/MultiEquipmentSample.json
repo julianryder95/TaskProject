@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "1.1",
+  "equipment": {
+    "id": "compressor_200",
+    "name": "Rotary Screw Air Compressor",
+    "modelNumber": "AC-800-TURBO",
+    "description": "Multi-stage oil-flooded rotary screw air compressor with integrated air-cooling package and PLC control system.",
+    "components": [
+      {
+        "id": "air_filter",
+        "name": "Intake Air Filter",
+        "description": "Heavy-duty particulate air filter protecting screw airend from airborne abrasive contaminants.",
+        "inspectionTips": "Inspect differential pressure indicator gauge.",
+        "safetyNotes": "Do not operate compressor with air filter element removed."
+      },
+      {
+        "id": "oil_separator",
+        "name": "Air/Oil Separator Vessel",
+        "description": "Cyclonic coalesce separator tank retaining oil droplets from compressed delivery air.",
+        "inspectionTips": "Check minimum pressure valve and scavenging line orifice.",
+        "safetyNotes": "Ensure vessel is fully vented to 0 PSI before loosening drain valve."
+      },
+      {
+        "id": "drive_motor",
+        "name": "High-Efficiency Drive Motor",
+        "description": "75kW high-torque motor driving twin rotary rotors via multi-V belt drive.",
+        "inspectionTips": "Check drive belt tension and motor bearing temperature.",
+        "safetyNotes": "De-energize main electrical breaker switch prior to belt inspection."
+      }
+    ]
+  },
+  "additionalEquipment": [
+    {
+      "id": "chiller_100",
+      "name": "Industrial Water Chiller",
+      "modelNumber": "WC-50-PRO",
+      "description": "Closed-loop industrial refrigeration chiller servicing production cooling lines.",
+      "components": []
+    }
+  ],
+  "procedures": [
+    {
+      "id": "proc_daily_check",
+      "name": "Compressor Daily Pre-Start Inspection",
+      "description": "Mandatory operator walk-around check before engaging automated factory air system.",
+      "estimatedDuration": "10 mins",
+      "steps": [
+        {
+          "id": "comp_step_01",
+          "stepNumber": 1,
+          "title": "Air Filter Differential Inspection",
+          "instruction": "Check the mechanical dust indicator on the intake filter housing. Clean or replace pleated filter if vacuum drop exceeds 50 mbar.",
+          "audio": -1,
+          "componentIds": [ "air_filter" ],
+          "checklistItemIds": [ "chk_comp_filter", "chk_comp_leaks" ],
+          "warning": "Never use compressed air at high pressure to blow dust back into the intake plenum."
+        },
+        {
+          "id": "comp_step_02",
+          "stepNumber": 2,
+          "title": "Oil Separator & Lubricant Level Check",
+          "instruction": "Inspect sight glass on separator reservoir. Oil level must reside between minimum and maximum marks while stopped.",
+          "audio": -1,
+          "componentIds": [ "oil_separator" ],
+          "checklistItemIds": [ "chk_comp_oil" ],
+          "warning": "Hot pressurized lubricant hazard: do not open oil fill plug while system is pressurized."
+        },
+        {
+          "id": "comp_step_03",
+          "stepNumber": 3,
+          "title": "Motor & Belt Drive Tension Assessment",
+          "instruction": "Check multi-ribbed belt deflection (approx 8-10mm under thumb pressure). Inspect motor fan cowl for airflow blockage.",
+          "audio": -1,
+          "componentIds": [ "drive_motor" ],
+          "checklistItemIds": [ "chk_comp_belt", "chk_comp_guards" ],
+          "warning": "Pinch point hazard: keep hands clear of pulleys and belt sheaves."
+        }
+      ]
+    },
+    {
+      "id": "proc_emergency_stop",
+      "name": "Emergency Shutdown Procedure",
+      "description": "Rapid shutdown sequence for abnormal vibration, temperature runaway, or catastrophic oil loss.",
+      "estimatedDuration": "5 mins",
+      "steps": [
+        {
+          "id": "comp_step_e01",
+          "stepNumber": 1,
+          "title": "Engage E-Stop Switch",
+          "instruction": "Depress the emergency stop palm button located on the front control pedestal immediately.",
+          "audio": -1,
+          "componentIds": [ "drive_motor" ],
+          "checklistItemIds": [ "chk_comp_estop" ],
+          "warning": "Notify area supervisor immediately following any emergency shutdown event."
+        }
+      ]
+    }
+  ],
+  "checklistItems": [
+    {
+      "id": "chk_comp_filter",
+      "description": "Air intake filter clean and free of physical obstruction",
+      "isRequired": true,
+      "category": "Operational"
+    },
+    {
+      "id": "chk_comp_oil",
+      "description": "Separator reservoir synthetic oil level within normal range",
+      "isRequired": true,
+      "category": "Operational"
+    },
+    {
+      "id": "chk_comp_belt",
+      "description": "Drive belt tension and alignment verified within manufacturer tolerance",
+      "isRequired": true,
+      "category": "Mechanical"
+    },
+    {
+      "id": "chk_comp_guards",
+      "description": "All protective belt guards and acoustic canopy panels securely latched",
+      "isRequired": true,
+      "category": "Safety"
+    },
+    {
+      "id": "chk_comp_leaks",
+      "description": "No visible pneumatic leaks, oil weeping, or pooled fluids around skid base",
+      "isRequired": false,
+      "category": "Operational"
+    },
+    {
+      "id": "chk_comp_estop",
+      "description": "Verify emergency stop button operates freely and triggers controller interlock",
+      "isRequired": true,
+      "category": "Safety"
+    }
+  ]
+}

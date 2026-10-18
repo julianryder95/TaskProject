@@ -1,45 +1,70 @@
 {
+    "schemaVersion": "1.1",
     "equipment": {
         "id": "pump_001",
-        "name": "Centrifugal Pump",
+        "name": "Centrifugal Pump Assembly",
+        "modelNumber": "CP-450-X",
+        "description": "Heavy-duty industrial centrifugal water pump driven by a three-phase induction motor and flexible shaft coupling.",
         "components": [
             {
                 "id": "motor",
                 "name": "Electric Motor",
-                "description": "Drives the pump shaft"
+                "description": "45kW 3-phase induction motor driving the primary pump drive shaft.",
+                "inspectionTips": "Check terminal box, cooling fins, and verify grounding connection.",
+                "safetyNotes": "Ensure power disconnect is locked out before tactile inspection."
             },
             {
                 "id": "coupling",
                 "name": "Shaft Coupling",
-                "description": "Connects the motor and pump shafts"
+                "description": "Flexible elastomeric jaw coupling transmitting torque from motor to impeller shaft.",
+                "inspectionTips": "Inspect elastomeric insert for degradation, cracking, or angular misalignment.",
+                "safetyNotes": "Coupling guard must be reinstalled prior to operational testing."
+            },
+            {
+                "id": "pump",
+                "name": "Pump Casing & Impeller Assembly",
+                "description": "Cast iron volute casing with mechanical seal chamber and suction/discharge flanges.",
+                "inspectionTips": "Check mechanical seal for fluid weeping and verify flange bolt torques.",
+                "safetyNotes": "Depressurize and vent suction lines before inspecting seal gland."
             }
         ]
     },
     "procedures": [
         {
             "id": "step_001",
-            "name": "Pump Inspection",
+            "name": "Centrifugal Pump Preventive Inspection",
+            "description": "Standard step-by-step pre-service mechanical and electrical integrity assessment.",
+            "estimatedDuration": "15 mins",
             "steps": [
                 {
                     "id": "step_01",
-                    "instruction": "Inspect the electric motor",
+                    "stepNumber": 1,
+                    "title": "Electric Motor Inspection",
+                    "instruction": "Inspect the electric motor housing for surface contamination, overheating signs, and verify power feed cables are undamaged.",
                     "audio": 0,
-                    "componentIds": [ "motor" ]
-
+                    "componentIds": [ "motor" ],
+                    "checklistItemIds": [ "check_ppe", "check_loto", "check_motor_housing" ],
+                    "warning": "Confirm high-voltage lockout/tagout (LOTO) isolation before approaching motor terminals."
                 },
                 {
                     "id": "step_02",
-                    "instruction": "Inspect the shaft coupling",
+                    "stepNumber": 2,
+                    "title": "Shaft Coupling Alignment",
+                    "instruction": "Inspect the shaft coupling and flexible element for signs of wear, eccentric play, or elastomer shearing.",
                     "audio": 1,
-                    "componentIds": [ "coupling" ]
-
+                    "componentIds": [ "coupling" ],
+                    "checklistItemIds": [ "check_coupling_alignment" ],
+                    "warning": "Ensure shaft has completely stopped spinning before inspecting coupling gap."
                 },
                 {
                     "id": "step_03",
-                    "instruction": "Check whether the pump has right valves",
+                    "stepNumber": 3,
+                    "title": "Pump Casing & Valves Verification",
+                    "instruction": "Verify that suction and discharge valves are in their correct positions, check for casing leakage, and inspect mechanical seal.",
                     "audio": 2,
-                    "componentIds": [ "pump" ]
-
+                    "componentIds": [ "pump" ],
+                    "checklistItemIds": [ "check_pump_valves", "check_oil_level" ],
+                    "warning": "Check line pressure gauges to ensure volute casing is not overpressurized."
                 }
             ]
         }

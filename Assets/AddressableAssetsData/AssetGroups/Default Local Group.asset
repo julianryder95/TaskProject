@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_Data:
     m_SerializedData: []
-  m_GUID: d4dfbf9afd3a64ae09977f11d6469128
+  m_GUID: aa52f2171aef34c64bc9f2c736d6e57e
   m_SerializeEntries:
   - m_GUID: a41c36d76fd924ead831335bdbef9db8
     m_Address: Assets/Application/Prefabs/Centrifugal_Pump.prefab

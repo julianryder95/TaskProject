@@ -1,73 +1,90 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class ARObjectSpawner : MonoBehaviour
 {
+
     [SerializeField] private ARRaycastManager raycastManager;
+    [SerializeField] private ARPlaneManager arPlaneManager;
     [SerializeField] private GameObject objectToSpawn;
+    [SerializeField] private Camera arCamera;
 
     [SerializeField] private AppInitializer appInitializer;
     [SerializeField] private ProcedureStepController procedureStepController;
-
-    private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
-    [SerializeField] private bool isPlaced;
-    private IAppLogger logger;
-    [SerializeField] private ARPlaneManager arPlaneManager;
     [SerializeField] private GameObject stepUI;
+
+
+    [SerializeField] private bool isPlaced;
+
+    private static readonly List<ARRaycastHit> hits = new();
+    private IAppLogger logger;
+    private ComponentRegistry spawnedRegistry;
+    private ComponentHighlighter spawnedHighlighter;
+    private GameObject spawnedObject;
 
     private void Awake()
     {
         logger = new AppLogger();
-        arPlaneManager = GetComponent<ARPlaneManager>();
+        Application.targetFrameRate = 60;
+
+        if (arPlaneManager == null)
+            arPlaneManager = GetComponent<ARPlaneManager>();
+
+        if (raycastManager == null)
+            raycastManager = GetComponent<ARRaycastManager>();
+
+        if (arCamera == null)
+            arCamera = Camera.main;
     }
 
     private void Start()
     {
         if (raycastManager == null)
             raycastManager = GetComponent<ARRaycastManager>();
-
-        HideExistingPlanes();
     }
 
     private void Update()
     {
-        // Prevent multiple spawns once the object is placed
-        if (isPlaced)
-            return;
-
-        // Ensure there is at least one active touch
         if (Input.touchCount == 0)
             return;
 
         Touch touch = Input.GetTouch(0);
 
-        // Do not spawn if tapping on UI buttons/panels
+        // Discard touches over UI elements
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
             return;
 
-        // Only trigger on initial touch contact
         if (touch.phase != TouchPhase.Began)
             return;
 
-        if (raycastManager.Raycast(
-                touch.position,
-                hits,
-                TrackableType.PlaneWithinPolygon))
+        // Stage 1: Initial Equipment Placement
+        if (!isPlaced)
+        {
+            HandlePlacementTouch(touch.position);
+            return;
+        }
+
+        // Stage 2: Interactive Component Selection via AR Raycast
+        HandleComponentSelectionTouch(touch.position);
+    }
+
+    private void HandlePlacementTouch(Vector2 touchPosition)
+    {
+        if (raycastManager == null || objectToSpawn == null)
+            return;
+
+        if (raycastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;
 
-            // Rotate by -90 degrees around X relative to the detected plane normal so the CAD model stands vertically upright on its base
+            // Rotate by -90 degrees around X relative to the detected surface plane normal
+            // so the industrial CAD model stands upright on its mounting base
             Quaternion placementRotation = hitPose.rotation * Quaternion.Euler(-90f, 0f, 0f);
 
-            GameObject spawnedObject =
-                Instantiate(
-                    objectToSpawn,
-                    hitPose.position,
-                    placementRotation);
-
+            spawnedObject = Instantiate(objectToSpawn, hitPose.position, placementRotation);
             isPlaced = true;
 
             InitializeProcedure(spawnedObject);
@@ -75,26 +92,54 @@ public class ARObjectSpawner : MonoBehaviour
         }
     }
 
-    private void InitializeProcedure(GameObject spawnedObject = null)
+    private void HandleComponentSelectionTouch(Vector2 touchPosition)
     {
-        if (stepUI != null)
-            stepUI.SetActive(true);
-
-        if (spawnedObject == null)
+        if (spawnedRegistry == null || arCamera == null)
             return;
 
-        var registry = spawnedObject.GetComponent<ComponentRegistry>();
-        var highlighter = spawnedObject.GetComponent<ComponentHighlighter>();
-
-        if (registry == null || highlighter == null)
+        Ray ray = arCamera.ScreenPointToRay(touchPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 20f))
         {
-            logger.LogError(
-                "ARObjectSpawner: ComponentRegistry or " +
-                "ComponentHighlighter missing from spawned pump.");
+            if (spawnedRegistry.TryGetComponentIdFromObject(hit.collider.gameObject, out string componentId))
+            {
+                logger?.Log($"[ARObjectSpawner] Component tapped in AR: {componentId}");
+
+                var compData = FindComponentData(componentId);
+                if (compData != null && procedureStepController != null)
+                {
+                    procedureStepController.DisplayComponentDetails(componentId, compData);
+                }
+            }
+        }
+    }
+
+    private ComponentData FindComponentData(string componentId)
+    {
+        var maintenanceData = appInitializer?.GetComponent<JsonDataLoader>()?.LoadedData;
+        if (maintenanceData?.equipment?.components == null)
+            return null;
+
+        return maintenanceData.equipment.components.Find(c => string.Equals(c.id, componentId, System.StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void InitializeProcedure(GameObject targetObject)
+    {
+        if (stepUI != null)
+        {
+            stepUI.SetActive(true);
+        }
+
+        spawnedRegistry = targetObject.GetComponent<ComponentRegistry>();
+        spawnedHighlighter = targetObject.GetComponent<ComponentHighlighter>();
+
+        if (spawnedRegistry == null || spawnedHighlighter == null)
+        {
+            logger?.LogError("[ARObjectSpawner] ComponentRegistry or ComponentHighlighter missing from spawned prefab.");
             return;
         }
 
-        procedureStepController.Initialize(appInitializer.ProcedureEngine, registry, highlighter, logger);
+        var engine = appInitializer != null ? appInitializer.ProcedureEngine : null;
+        procedureStepController.Initialize(engine, spawnedRegistry, spawnedHighlighter, logger);
     }
 
     public void HideExistingPlanes()
@@ -106,21 +151,7 @@ public class ARObjectSpawner : MonoBehaviour
                 plane.gameObject.SetActive(false);
             }
             arPlaneManager.enabled = false;
+            logger?.Log("[ARObjectSpawner] AR Planes hidden and ARPlaneManager disabled for mobile performance.");
         }
     }
-    /* private IEnumerator LoadAndSpawnPump(Pose pose)
-     {
-         var handle = Addressables.InstantiateAsync(prefabAddress, pose.position, pose.rotation);
-         yield return handle;
-
-         if (handle.Status != AsyncOperationStatus.Succeeded)
-         {
-             logger.LogError($"Failed to load Addressable prefab: {prefabAddress}");
-             isPlaced = false;
-             yield break;
-         }
-
-         GameObject spawnedObject = handle.Result;
-         InitializeProcedure(spawnedObject);
-     }*/
 }
