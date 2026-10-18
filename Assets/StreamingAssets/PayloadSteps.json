@@ -1,0 +1,49 @@
+
+{
+  "equipment": {
+    "id": "pump_001",
+    "name": "Centrifugal Pump",
+    "components": [
+      {
+        "id": "motor",
+        "name": "Electric Motor",
+        "description": "Drives the pump shaft"
+      },
+      {
+        "id": "coupling",
+        "name": "Shaft Coupling",
+        "description": "Connects the motor and pump shafts"
+      }
+    ]
+  },
+  "procedures": [
+    {
+      "id": "inspection_001",
+      "name": "Pump Inspection",
+      "steps": [
+        {
+          "id": "step_01",
+          "instruction": "Inspect the electric motor",
+          "componentId": "motor",
+          "checklistItemId": "motor_check"
+        },
+        {
+          "id": "step_02",
+          "instruction": "Inspect the shaft coupling",
+          "componentId": "coupling",
+          "checklistItemId": "coupling_check"
+        }
+      ]
+    }
+  ],
+  "checklistItems": [
+    {
+      "id": "motor_check",
+      "description": "Check motor for visible damage"
+    },
+    {
+      "id": "coupling_check",
+      "description": "Check coupling for wear"
+    }
+  ]
+}
