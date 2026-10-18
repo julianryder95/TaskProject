@@ -40,7 +40,7 @@ public class ProcedureStepData
     public string id;
     public string instruction;
     public List<string> componentIds;
-    public List<string> checklistItemIds;
+
 }
 
 

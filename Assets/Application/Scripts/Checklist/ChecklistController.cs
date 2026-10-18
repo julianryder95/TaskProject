@@ -1,108 +1,56 @@
-
 using System.Collections.Generic;
-using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ChecklistController : MonoBehaviour
 {
-    [SerializeField] private Transform checklistContent;
-    [SerializeField] private Toggle checklistTogglePrefab;
+    [SerializeField] private List<Toggle> checklistToggles;
 
     private ChecklistPersistence persistence;
     private ChecklistState checklistState;
-    private MaintenanceData maintenanceData;
-    private IProcedureEngine procedureEngine;
     private IAppLogger logger;
 
-    private readonly List<GameObject> spawnedToggles = new();
-
-    public void Initialize(MaintenanceData data, IProcedureEngine engine, IAppLogger appLogger)
+    public void Initialize(IAppLogger appLogger)
     {
-        maintenanceData = data;
-        procedureEngine = engine;
         logger = appLogger;
         persistence = new ChecklistPersistence(logger);
         checklistState = persistence.Load();
 
-        if (checklistState.items == null)
-            checklistState.items = new List<ChecklistItemState>();
-
-        foreach (var item in procedureEngine.CurrentStep.checklistItemIds)
+        foreach (var toggle in checklistToggles)
         {
-            if (!checklistState.items.Any(x => x.checklistItemId == item))
-                checklistState.items.Add(new ChecklistItemState { checklistItemId = item, isCompleted = false });
-        }
+            string id = toggle.gameObject.name;
 
+            var state = checklistState.items.Find(x => x.checklistItemId == id);
 
-        ShowStep(procedureEngine.CurrentStep);
-    }
-
-    public void ShowStep(ProcedureStepData step)
-    {
-        ClearToggles();
-
-        if (step?.checklistItemIds == null)
-            return;
-
-        foreach (string item in step.checklistItemIds)
-        {
-
-            if (string.IsNullOrEmpty(item))
+            if (state == null)
             {
-                logger?.LogWarning($"Checklist definition not found: {item}");
-                continue;
+                state = new ChecklistItemState
+                {
+                    checklistItemId = id,
+                    isCompleted = false
+                };
+
+                checklistState.items.Add(state);
             }
 
-            Toggle toggle = Instantiate(checklistTogglePrefab, checklistContent);
-            spawnedToggles.Add(toggle.gameObject);
+            toggle.SetIsOnWithoutNotify(state.isCompleted);
 
-            var label = toggle.GetComponentInChildren<Text>();
-
-            if (label != null)
-                label.text = item;
-
-            toggle.SetIsOnWithoutNotify(IsCompleted(item));
-
-            string checklistItemId = item;
-            toggle.onValueChanged.AddListener(isOn => SetCompleted(checklistItemId, isOn));
-        }
-    }
-
-    public bool IsCompleted(string checklistItemId)
-    {
-        var item = checklistState?.items.Find(x => x.checklistItemId == checklistItemId);
-        return item != null && item.isCompleted;
-    }
-
-    public void SetCompleted(string checklistItemId, bool isCompleted)
-    {
-        if (checklistState == null)
-            return;
-
-        var item = checklistState.items.Find(x => x.checklistItemId == checklistItemId);
-
-        if (item == null)
-        {
-            logger?.LogWarning($"Checklist item not found: {checklistItemId} and so adding it");
-            checklistState.items.Add(new ChecklistItemState { checklistItemId = checklistItemId, isCompleted = isCompleted });
-            persistence.Save(checklistState);
-            return;
+            string checklistId = id;
+            toggle.onValueChanged.AddListener(
+                isOn => UpdateChecklist(checklistId, isOn));
         }
 
-        item.isCompleted = isCompleted;
         persistence.Save(checklistState);
     }
 
-    private void ClearToggles()
+    private void UpdateChecklist(string id, bool isCompleted)
     {
-        foreach (var toggle in spawnedToggles)
-        {
-            if (toggle != null)
-                Destroy(toggle);
-        }
+        var state = checklistState.items.Find(x => x.checklistItemId == id);
 
-        spawnedToggles.Clear();
+        if (state == null)
+            return;
+
+        state.isCompleted = isCompleted;
+        persistence.Save(checklistState);
     }
 }

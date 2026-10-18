@@ -16,6 +16,9 @@ public class ARObjectSpawner : MonoBehaviour
 
     private bool isPlaced;
     private IAppLogger logger;
+    [SerializeField] private ARPlaneManager arPlaneManager;
+    [SerializeField]
+    private GameObject stepUI;
 
     private void Awake()
     {
@@ -27,7 +30,7 @@ public class ARObjectSpawner : MonoBehaviour
         if (raycastManager == null)
             raycastManager = GetComponent<ARRaycastManager>();
 
-        InitializeProcedure(objectToSpawn);
+        HideExistingPlanes();
     }
 
     private void Update()
@@ -60,17 +63,17 @@ public class ARObjectSpawner : MonoBehaviour
                 Instantiate(
                     objectToSpawn,
                     hitPose.position,
-                    hitPose.rotation);
+                    new Quaternion(-90, 0, 0, 0));
 
             InitializeProcedure(spawnedObject);
-
+            HideExistingPlanes();
             isPlaced = true;
         }
     }
 
     private void InitializeProcedure(GameObject spawnedObject = null)
     {
-
+        stepUI.SetActive(true);
         var registry =
             spawnedObject.GetComponent<ComponentRegistry>();
 
@@ -85,10 +88,20 @@ public class ARObjectSpawner : MonoBehaviour
             return;
         }
 
-        procedureStepController.Initialize(
-            appInitializer.ProcedureEngine,
-            registry,
-            highlighter,
-            logger);
+        procedureStepController.Initialize(appInitializer.ProcedureEngine, registry, highlighter, logger);
+    }
+
+    public void HideExistingPlanes()
+    {
+
+        if (arPlaneManager != null)
+        {
+
+            foreach (var plane in arPlaneManager.trackables)
+            {
+                plane.gameObject.SetActive(false);
+            }
+            arPlaneManager.enabled = false;
+        }
     }
 }

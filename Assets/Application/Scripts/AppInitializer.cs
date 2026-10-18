@@ -46,7 +46,6 @@ public class AppInitializer : MonoBehaviour
             return;
         }
 
-        checklistController.Initialize(data, ProcedureEngine, logger);
     }
 
 

@@ -17,38 +17,29 @@
     },
     "procedures": [
         {
-            "id": "inspection_001",
+            "id": "step_001",
             "name": "Pump Inspection",
             "steps": [
                 {
                     "id": "step_01",
                     "instruction": "Inspect the electric motor",
-                    "componentIds": [ "motor" ],
-                    "checklistItemIds": [
-                        "motor_damage_check",
-                        "motor_noise_check",
-                        "motor_temperature_check"
-                    ]
+                    "audio": 0,
+                    "componentIds": [ "motor" ]
+
                 },
                 {
                     "id": "step_02",
                     "instruction": "Inspect the shaft coupling",
-                    "componentIds": [ "coupling" ],
-                    "checklistItemIds": [
-                        "coupling_damage_check",
-                        "coupling_noise_check",
-                        "coupling_temperature_check"
-                    ]
+                    "audio": 1,
+                    "componentIds": [ "coupling" ]
+
                 },
                 {
                     "id": "step_03",
                     "instruction": "Check whether the pump has right valves",
-                    "componentIds": [ "pump" ],
-                    "checklistItemIds": [
-                        "pump_damage_check",
-                        "pump_noise_check",
-                        "pump_temperature_check"
-                    ]
+                    "audio": 2,
+                    "componentIds": [ "pump" ]
+
                 }
             ]
         }

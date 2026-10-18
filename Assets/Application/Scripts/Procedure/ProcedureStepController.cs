@@ -6,7 +6,6 @@ public class ProcedureStepController : MonoBehaviour
 {
     [SerializeField]
     private TextMeshProUGUI instructionText;
-    [SerializeField] private ChecklistController checklistController;
     private IProcedureEngine procedureEngine;
     private IComponentRegistry componentRegistry;
     private IComponentHighlighter highlighter;
@@ -69,7 +68,6 @@ public class ProcedureStepController : MonoBehaviour
         if (instructionText != null)
             instructionText.text = step.instruction;
 
-        checklistController.ShowStep(step);
         foreach (string componentId in step.componentIds)
         {
             ActivateComponent(componentId);
