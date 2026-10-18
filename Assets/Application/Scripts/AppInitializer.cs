@@ -35,8 +35,18 @@ public class AppInitializer : MonoBehaviour
 
     private void HandleDataLoaded(MaintenanceData data)
     {
+        var procedure = data.procedures[0];
+
         ProcedureEngine = new ProcedureEngine(data);
-        logger.Log("Procedure engine initialized.");
+
+        if (!ProcedureEngine.StartProcedure(procedure.id))
+        {
+            ProcedureEngine = null;
+            logger.LogError($"Failed to start procedure: {procedure.id}");
+            return;
+        }
+
+        logger.Log($"Started procedure: {procedure.name}");
     }
 
 

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class ARObjectSpawner : MonoBehaviour
 {
@@ -29,10 +30,16 @@ public class ARObjectSpawner : MonoBehaviour
 
     private void Update()
     {
+
         if (Input.touchCount == 0)
             return;
 
         Touch touch = Input.GetTouch(0);
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+        {
+            return;
+        }
 
         if (touch.phase != TouchPhase.Began)
             return;

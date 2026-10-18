@@ -9,10 +9,9 @@ using Newtonsoft.Json;
 public class JsonDataLoader : MonoBehaviour
 {
     [SerializeField]
-    private string fileName =
-        "pump_maintenance.json";
+    private string fileName;
 
-    public MaintenanceData LoadedData { get; private set; }
+    public MaintenanceData LoadedData;
 
     public event System.Action<MaintenanceData> OnDataLoaded;
     public event System.Action<string> OnDataLoadFailed;
@@ -30,8 +29,10 @@ public class JsonDataLoader : MonoBehaviour
 
     private IEnumerator LoadData()
     {
-        string path =
-            $"{Application.streamingAssetsPath}/{fileName}";
+        // as i use mac , i need to use Sytem.IO , not directly Application.streamingAssetsPath
+        string path = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
+
+        path = new System.Uri(path).AbsoluteUri;
 
         using UnityWebRequest request = UnityWebRequest.Get(path);
 

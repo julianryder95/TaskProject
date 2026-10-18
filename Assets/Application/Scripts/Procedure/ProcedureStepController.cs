@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using TMPro;
 
 public class ProcedureStepController : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class ProcedureStepController : MonoBehaviour
     private IComponentRegistry componentRegistry;
     private IComponentHighlighter highlighter;
     private IAppLogger logger;
+[SerializeField]
+private TextMeshProUGUI instructionText;
 
     public void Initialize(IProcedureEngine engine, IComponentRegistry registry, IComponentHighlighter componentHighlighter, IAppLogger appLogger)
     {
@@ -36,23 +39,33 @@ public class ProcedureStepController : MonoBehaviour
             ShowCurrentStep();
     }
 
-    private void ShowCurrentStep()
+   
+private void ShowCurrentStep()
+{
+    highlighter.ClearHighlight();
+
+    var step = procedureEngine.CurrentStep;
+
+    if (step == null)
     {
-        highlighter.ClearHighlight();
+        instructionText.text = procedureEngine.IsCompleted
+            ? "Procedure completed!"
+            : "No active procedure.";
 
-        var step = procedureEngine.CurrentStep;
-
-        if (step == null)
-            return;
-
-        if (componentRegistry.TryGetComponentObject(
-            step.componentId, out GameObject component))
-        {
-            highlighter.Highlight(component);
-        }
-        else
-        {
-            logger.LogError($"Component mapping not found: {step.componentId}");
-        }
+        return;
     }
+
+    instructionText.text = step.instruction;
+
+    if (componentRegistry.TryGetComponentObject(
+        step.componentId, out var component))
+    {
+        highlighter.Highlight(component);
+    }
+    else
+    {
+        logger.LogError(
+            $"Component mapping not found: {step.componentId}");
+    }
+}
 }
