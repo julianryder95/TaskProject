@@ -39,6 +39,7 @@ public class ProcedureStepData
 {
     public string id;
     public string instruction;
+    public int audio;
     public List<string> componentIds;
 
 }

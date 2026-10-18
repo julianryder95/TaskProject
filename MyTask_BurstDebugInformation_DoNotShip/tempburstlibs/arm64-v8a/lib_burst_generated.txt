@@ -21,6 +21,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --assembly-defines=System.Runtime.Serialization;
 --assembly-defines=System.Xml;
 --assembly-defines=System.Xml.Linq;
+--assembly-defines=Unity.Addressables;
 --assembly-defines=Unity.Burst;
 --assembly-defines=Unity.Burst.Unsafe;
 --assembly-defines=Unity.Collections;
@@ -30,6 +31,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.RenderPipelines.Core.Runtime;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
+--assembly-defines=Unity.ResourceManager;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.VisualScripting.Core;
 --assembly-defines=Unity.VisualScripting.Flow;
@@ -88,6 +90,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --assembly-defines=System.Runtime.Serialization;
 --assembly-defines=System.Xml;
 --assembly-defines=System.Xml.Linq;
+--assembly-defines=Unity.Addressables;
 --assembly-defines=Unity.Burst;
 --assembly-defines=Unity.Burst.Unsafe;
 --assembly-defines=Unity.Collections;
@@ -97,6 +100,7 @@ Library: /Users/saravananp/Desktop/unity/la/Task/Temp/BurstOutput/tempburstlibs/
 --assembly-defines=Unity.RenderPipeline.Universal.ShaderLibrary;
 --assembly-defines=Unity.RenderPipelines.Core.Runtime;
 --assembly-defines=Unity.RenderPipelines.Universal.Runtime;
+--assembly-defines=Unity.ResourceManager;
 --assembly-defines=Unity.TextMeshPro;
 --assembly-defines=Unity.VisualScripting.Core;
 --assembly-defines=Unity.VisualScripting.Flow;

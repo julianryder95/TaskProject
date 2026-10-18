@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class AudioPlayer : MonoBehaviour
 {
-    [SerializeField] private AudioClip[] audioClips;
+    public AudioClip[] audioClips;
 
     private AudioSource audioSource;
 

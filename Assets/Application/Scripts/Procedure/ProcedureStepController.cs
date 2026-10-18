@@ -11,7 +11,10 @@ public class ProcedureStepController : MonoBehaviour
     private IComponentHighlighter highlighter;
     private IAppLogger logger;
 
-    private readonly List<GameObject> activeLabels = new();
+    [SerializeField]
+    private AudioPlayer audioPlayer;
+
+    private List<GameObject> activeLabels = new();
 
     public void Initialize(
         IProcedureEngine engine,
@@ -23,6 +26,8 @@ public class ProcedureStepController : MonoBehaviour
         componentRegistry = registry;
         highlighter = componentHighlighter;
         logger = appLogger;
+
+        audioPlayer = GetComponent<AudioPlayer>();
 
         ShowCurrentStep();
     }
@@ -65,6 +70,8 @@ public class ProcedureStepController : MonoBehaviour
             return;
         }
 
+        audioPlayer.Play(audioPlayer.audioClips[step.audio]);
+
         if (instructionText != null)
             instructionText.text = step.instruction;
 
@@ -100,7 +107,7 @@ public class ProcedureStepController : MonoBehaviour
     private void ClearCurrentStep()
     {
         highlighter.ClearHighlight();
-
+        audioPlayer.Stop();
         foreach (var label in activeLabels)
         {
             if (label != null)

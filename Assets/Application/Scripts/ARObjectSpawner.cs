@@ -13,12 +13,10 @@ public class ARObjectSpawner : MonoBehaviour
     [SerializeField] private ProcedureStepController procedureStepController;
 
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
-    [SerializeField]
-    private bool isPlaced;
+    [SerializeField] private bool isPlaced;
     private IAppLogger logger;
     [SerializeField] private ARPlaneManager arPlaneManager;
-    [SerializeField]
-    private GameObject stepUI;
+    [SerializeField] private GameObject stepUI;
 
     private void Awake()
     {
@@ -36,34 +34,41 @@ public class ARObjectSpawner : MonoBehaviour
 
     private void Update()
     {
+        // Prevent multiple spawns once the object is placed
+        if (isPlaced)
+            return;
 
-        //     if (Input.touchCount == 0)
-        //       return;
+        // Ensure there is at least one active touch
+        if (Input.touchCount == 0)
+            return;
 
-        //   Touch touch = ;
-        //
+        Touch touch = Input.GetTouch(0);
 
-        //      if (touch.phase != TouchPhase.Began)
-        //         return;
+        // Do not spawn if tapping on UI buttons/panels
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+            return;
 
-        //    if (isPlaced)
-        //      return;
-
+        // Only trigger on initial touch contact
+        if (touch.phase != TouchPhase.Began)
+            return;
 
         if (raycastManager.Raycast(
-                Input.GetTouch(0).position,
+                touch.position,
                 hits,
                 TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;
+
+            // Rotate by -90 degrees around X relative to the detected plane normal so the CAD model stands vertically upright on its base
+            Quaternion placementRotation = hitPose.rotation * Quaternion.Euler(-90f, 0f, 0f);
+
             GameObject spawnedObject =
                 Instantiate(
                     objectToSpawn,
                     hitPose.position,
-                    new Quaternion(-90, 0, 0, 0));
+                    placementRotation);
+
             isPlaced = true;
-
-
 
             InitializeProcedure(spawnedObject);
             HideExistingPlanes();
@@ -72,12 +77,14 @@ public class ARObjectSpawner : MonoBehaviour
 
     private void InitializeProcedure(GameObject spawnedObject = null)
     {
-        stepUI.SetActive(true);
-        var registry =
-            spawnedObject.GetComponent<ComponentRegistry>();
+        if (stepUI != null)
+            stepUI.SetActive(true);
 
-        var highlighter =
-            spawnedObject.GetComponent<ComponentHighlighter>();
+        if (spawnedObject == null)
+            return;
+
+        var registry = spawnedObject.GetComponent<ComponentRegistry>();
+        var highlighter = spawnedObject.GetComponent<ComponentHighlighter>();
 
         if (registry == null || highlighter == null)
         {
@@ -92,10 +99,8 @@ public class ARObjectSpawner : MonoBehaviour
 
     public void HideExistingPlanes()
     {
-
         if (arPlaneManager != null)
         {
-
             foreach (var plane in arPlaneManager.trackables)
             {
                 plane.gameObject.SetActive(false);
@@ -103,4 +108,19 @@ public class ARObjectSpawner : MonoBehaviour
             arPlaneManager.enabled = false;
         }
     }
+    /* private IEnumerator LoadAndSpawnPump(Pose pose)
+     {
+         var handle = Addressables.InstantiateAsync(prefabAddress, pose.position, pose.rotation);
+         yield return handle;
+
+         if (handle.Status != AsyncOperationStatus.Succeeded)
+         {
+             logger.LogError($"Failed to load Addressable prefab: {prefabAddress}");
+             isPlaced = false;
+             yield break;
+         }
+
+         GameObject spawnedObject = handle.Result;
+         InitializeProcedure(spawnedObject);
+     }*/
 }
