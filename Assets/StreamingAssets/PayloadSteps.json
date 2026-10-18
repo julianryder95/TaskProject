@@ -36,21 +36,22 @@
                     "componentIds": [ "coupling" ],
                     "checklistItemIds": [
                         "coupling_damage_check",
-                        "oupling_noise_check",
-                        "oupling_temperature_check"
+                        "coupling_noise_check",
+                        "coupling_temperature_check"
+                    ]
+                },
+                {
+                    "id": "step_03",
+                    "instruction": "Check the pump has right valves",
+                    "componentIds": [ "pump" ],
+                    "checklistItemIds": [
+                        "pump_damage_check",
+                        "pump_noise_check",
+                        "pump_temperature_check"
                     ]
                 }
             ]
         }
-    ],
-    "checklistItems": [
-        {
-            "id": "motor_check",
-            "description": "Check motor for visible damage"
-        },
-        {
-            "id": "coupling_check",
-            "description": "Check coupling for wear"
-        }
     ]
+
 }

@@ -26,6 +26,8 @@ public class ARObjectSpawner : MonoBehaviour
     {
         if (raycastManager == null)
             raycastManager = GetComponent<ARRaycastManager>();
+
+        InitializeProcedure(objectToSpawn);
     }
 
     private void Update()
@@ -66,22 +68,8 @@ public class ARObjectSpawner : MonoBehaviour
         }
     }
 
-    private void InitializeProcedure(GameObject spawnedObject)
+    private void InitializeProcedure(GameObject spawnedObject = null)
     {
-        if (appInitializer == null ||
-            procedureStepController == null)
-        {
-            logger.LogError(
-                "ARObjectSpawner: Required references are missing.");
-            return;
-        }
-
-        if (appInitializer.ProcedureEngine == null)
-        {
-            logger.LogError(
-                "ARObjectSpawner: Procedure engine is not initialized.");
-            return;
-        }
 
         var registry =
             spawnedObject.GetComponent<ComponentRegistry>();

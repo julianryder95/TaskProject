@@ -7,7 +7,7 @@ public class MaintenanceData
 {
     public EquipmentData equipment;
     public List<ProcedureData> procedures;
-    public List<ChecklistItemData> checklistItems;
+
 }
 
 [Serializable]
@@ -43,9 +43,4 @@ public class ProcedureStepData
     public List<string> checklistItemIds;
 }
 
-[Serializable]
-public class ChecklistItemData
-{
-    public string id;
-    public string description;
-}
+

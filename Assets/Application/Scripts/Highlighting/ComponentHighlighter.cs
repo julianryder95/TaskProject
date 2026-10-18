@@ -6,25 +6,71 @@ using UnityEngine.Rendering;
 public class ComponentHighlighter : MonoBehaviour, IComponentHighlighter
 {
     [SerializeField] private Material outlineMaterial;
+    [SerializeField] private Vector3 boundsPadding = new Vector3(0.02f, 0.02f, 0.02f);
 
-    private Dictionary<GameObject, List<GameObject>> overlays = new Dictionary<GameObject, List<GameObject>>();
-    private HashSet<GameObject> activeComponents = new HashSet<GameObject>();
+    private readonly Dictionary<GameObject, GameObject> boundsBoxes = new();
+    private readonly HashSet<GameObject> activeComponents = new();
 
     public void Highlight(GameObject component)
     {
         if (component == null || outlineMaterial == null)
             return;
 
-        if (!overlays.TryGetValue(component, out var objects))
+        if (!boundsBoxes.TryGetValue(component, out var box))
         {
-            objects = CreateOverlays(component);
-            overlays.Add(component, objects);
+            box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            box.name = component.name + "_HighlightBounds";
+
+            var collider = box.GetComponent<Collider>();
+
+            if (collider != null)
+                Destroy(collider);
+
+            var renderer = box.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = outlineMaterial;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+
+            boundsBoxes.Add(component, box);
         }
 
-        foreach (var overlay in objects)
-            overlay.SetActive(true);
+        if (!CalculateBounds(component, out var bounds))
+        {
+            box.SetActive(false);
+            return;
+        }
+
+        box.transform.SetPositionAndRotation(bounds.center, Quaternion.identity);
+        box.transform.localScale = bounds.size + boundsPadding;
+        box.SetActive(true);
 
         activeComponents.Add(component);
+    }
+
+    private bool CalculateBounds(GameObject component, out Bounds bounds)
+    {
+        var renderers = component.GetComponentsInChildren<MeshRenderer>(true);
+
+        bounds = default;
+        bool hasBounds = false;
+
+        foreach (var meshRenderer in renderers)
+        {
+            if (!meshRenderer.enabled)
+                continue;
+
+            if (!hasBounds)
+            {
+                bounds = meshRenderer.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(meshRenderer.bounds);
+            }
+        }
+
+        return hasBounds;
     }
 
     public void ClearHighlight()
@@ -32,63 +78,25 @@ public class ComponentHighlighter : MonoBehaviour, IComponentHighlighter
         foreach (var component in activeComponents)
         {
             if (component != null &&
-                overlays.TryGetValue(component, out var objects))
+                boundsBoxes.TryGetValue(component, out var box) &&
+                box != null)
             {
-                foreach (var overlay in objects)
-                {
-                    if (overlay != null)
-                        overlay.SetActive(false);
-                }
+                box.SetActive(false);
             }
         }
 
         activeComponents.Clear();
     }
 
-    private List<GameObject> CreateOverlays(GameObject component)
-    {
-        var result = new List<GameObject>();
-        var renderers = component.GetComponentsInChildren<MeshRenderer>(true);
-
-        foreach (var source in renderers)
-        {
-            var filter = source.GetComponent<MeshFilter>();
-
-            if (filter == null || filter.sharedMesh == null)
-                continue;
-
-            var overlay = new GameObject(source.name + "_Outline");
-
-            overlay.transform.SetParent(source.transform.parent, false);
-            overlay.transform.SetLocalPositionAndRotation(
-                source.transform.localPosition,
-                source.transform.localRotation);
-            overlay.transform.localScale = source.transform.localScale;
-            overlay.layer = source.gameObject.layer;
-
-            overlay.AddComponent<MeshFilter>().sharedMesh = filter.sharedMesh;
-
-            var renderer = overlay.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = outlineMaterial;
-            renderer.shadowCastingMode = ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-
-            overlay.SetActive(false);
-            result.Add(overlay);
-        }
-
-        return result;
-    }
-
     private void OnDestroy()
     {
-        foreach (var objects in overlays.Values)
+        foreach (var box in boundsBoxes.Values)
         {
-            foreach (var overlay in objects)
-            {
-                if (overlay != null)
-                    Destroy(overlay);
-            }
+            if (box != null)
+                Destroy(box);
         }
+
+        boundsBoxes.Clear();
+        activeComponents.Clear();
     }
 }

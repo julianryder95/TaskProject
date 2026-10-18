@@ -15,6 +15,7 @@ public class AppInitializer : MonoBehaviour
         checklistController = GetComponent<ChecklistController>();
         logger = new AppLogger();
         dataLoader.InitializeLogger(logger);
+        dataLoader.BeginLoad();
 
     }
 
@@ -24,10 +25,7 @@ public class AppInitializer : MonoBehaviour
         dataLoader.OnDataLoadFailed += HandleDataLoadFailed;
     }
 
-    private void Start()
-    {
-        dataLoader.BeginLoad();
-    }
+
 
     private void OnDisable()
     {
@@ -48,8 +46,7 @@ public class AppInitializer : MonoBehaviour
             return;
         }
 
-        logger?.Log($"Started procedure: {procedure.name}");
-        checklistController.Initialize(data, logger);
+        checklistController.Initialize(data, ProcedureEngine, logger);
     }
 
 
