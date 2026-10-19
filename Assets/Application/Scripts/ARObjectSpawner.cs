@@ -18,12 +18,13 @@ public class ARObjectSpawner : MonoBehaviour
 
 
     [SerializeField] private bool isPlaced;
-
-    private static readonly List<ARRaycastHit> hits = new();
+    [SerializeField] private GameObject scanInstruction;
+    private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
     private IAppLogger logger;
     private ComponentRegistry spawnedRegistry;
     private ComponentHighlighter spawnedHighlighter;
     private GameObject spawnedObject;
+
 
     private void Awake()
     {
@@ -76,6 +77,7 @@ public class ARObjectSpawner : MonoBehaviour
         if (raycastManager == null || objectToSpawn == null)
             return;
 
+        scanInstruction.SetActive(false);
         if (raycastManager.Raycast(touchPosition, hits, TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;

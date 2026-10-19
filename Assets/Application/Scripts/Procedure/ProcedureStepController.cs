@@ -128,7 +128,7 @@ public class ProcedureStepController : MonoBehaviour
 
         if (!string.IsNullOrWhiteSpace(step.warning))
         {
-            formattedText += $"\n\n<color=#D84315>⚠️ <b>Precaution:</b> {step.warning}</color>";
+            formattedText += $"\n\n<color=#D84315><b>Precaution:</b> {step.warning}</color>";
         }
 
         if (instructionText != null)
@@ -222,7 +222,7 @@ public class ProcedureStepController : MonoBehaviour
             }
             if (!string.IsNullOrWhiteSpace(data.safetyNotes))
             {
-                detailText += $"\n<color=#D84315>⚠️ {data.safetyNotes}</color>";
+                detailText += $"\n<color=#D84315>{data.safetyNotes}</color>";
             }
             detailText += "\n\n<i>(Tap 'Next' or 'Previous' to resume workflow)</i>";
             instructionText.text = detailText;
