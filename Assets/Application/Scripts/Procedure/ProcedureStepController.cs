@@ -98,7 +98,7 @@ public class ProcedureStepController : MonoBehaviour
         {
             if (instructionText != null)
             {
-                instructionText.text = "<b><color=#2E7D32>Procedure Completed!</color></b>\n\nAll inspection steps verified successfully.\nReview the checklist to confirm compliance.";
+                instructionText.text = "<b><color=#2E7D32>Procedure Completed!</color></b>\n\nAll inspection steps verified successfully.";
             }
 
             if (stepProgressText != null)

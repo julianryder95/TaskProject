@@ -7,7 +7,6 @@ using UnityEngine;
 public class AppInitializer : MonoBehaviour
 {
     [SerializeField] private JsonDataLoader dataLoader;
-    [SerializeField] private ChecklistController checklistController;
 
     public IProcedureEngine ProcedureEngine { get; private set; }
     public IAppLogger Logger => logger;
@@ -16,6 +15,7 @@ public class AppInitializer : MonoBehaviour
 
     private void Awake()
     {
+
         logger = new AppLogger();
 
         if (dataLoader == null)
@@ -27,10 +27,7 @@ public class AppInitializer : MonoBehaviour
             }
         }
 
-        if (checklistController == null)
-        {
-            checklistController = FindFirstObjectByType<ChecklistController>(FindObjectsInactive.Include);
-        }
+
 
         dataLoader.InitializeLogger(logger);
         dataLoader.BeginLoad();
