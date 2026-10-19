@@ -29,13 +29,11 @@ public class ProcedureEngine : IProcedureEngine
 
     public int TotalSteps => CurrentProcedure?.steps?.Count ?? 0;
 
-    public bool IsCompleted;
+    public bool IsCompleted { get; private set; }
 
     public bool CanMoveNext => CurrentProcedure != null && !IsCompleted;
 
     public bool CanMovePrevious => CurrentProcedure != null && currentStepIndex > 0;
-
-    bool IProcedureEngine.IsCompleted => throw new NotImplementedException();
 
     public event Action<ProcedureStepData, int, int> OnStepChanged;
     public event Action<ProcedureData> OnProcedureStarted;

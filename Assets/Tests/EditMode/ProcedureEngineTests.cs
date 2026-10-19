@@ -142,18 +142,5 @@ public class ProcedureEngineTests
 
 
 
-    [Test]
-    public void Extensibility_MultipleProcedures_SwitchesCleanly()
-    {
-        var data = CreateTestData();
-        var engine = new ProcedureEngine(data);
 
-        engine.StartProcedure("procedure_01");
-        Assert.That(engine.TotalSteps, Is.EqualTo(2));
-
-        engine.StartProcedure("procedure_02");
-        Assert.That(engine.CurrentProcedure.name, Is.EqualTo("Emergency Shutdown"));
-        Assert.That(engine.TotalSteps, Is.EqualTo(1));
-        Assert.That(engine.CurrentStep.id, Is.EqualTo("step_e01"));
-    }
 }

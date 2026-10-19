@@ -43,7 +43,6 @@
                     "instruction": "Inspect the electric motor housing for surface contamination, overheating signs, and verify power feed cables are undamaged.",
                     "audio": 0,
                     "componentIds": [ "motor" ],
-                    "checklistItemIds": [ "check_ppe", "check_loto", "check_motor_housing" ],
                     "warning": "Confirm high-voltage lockout/tagout (LOTO) isolation before approaching motor terminals."
                 },
                 {
@@ -53,7 +52,6 @@
                     "instruction": "Inspect the shaft coupling and flexible element for signs of wear, eccentric play, or elastomer shearing.",
                     "audio": 1,
                     "componentIds": [ "coupling" ],
-                    "checklistItemIds": [ "check_coupling_alignment" ],
                     "warning": "Ensure shaft has completely stopped spinning before inspecting coupling gap."
                 },
                 {
@@ -63,7 +61,6 @@
                     "instruction": "Verify that suction and discharge valves are in their correct positions, check for casing leakage, and inspect mechanical seal.",
                     "audio": 2,
                     "componentIds": [ "pump" ],
-                    "checklistItemIds": [ "check_pump_valves", "check_oil_level" ],
                     "warning": "Check line pressure gauges to ensure volute casing is not overpressurized."
                 }
             ]
